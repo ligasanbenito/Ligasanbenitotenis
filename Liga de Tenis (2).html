@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Liga de Tenis</title>
+<style>
+:root{--bg:#f6efe3;--card:#fffaf1;--ink:#23301f;--mut:#6f6a5c;--acc:#b5532e;--line:#e4d9c4;--as:#cfe8cf;--de:#f3cdc4;--pr:#f5e3a3;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#16201a;--card:#1f2c24;--ink:#efe9da;--mut:#a9a692;--acc:#e0805a;--line:#33443a;--as:#25442b;--de:#58291f;--pr:#51451c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#16201a;--card:#1f2c24;--ink:#efe9da;--mut:#a9a692;--acc:#e0805a;--line:#33443a;--as:#25442b;--de:#58291f;--pr:#51451c;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+#root{max-width:560px;margin:0 auto;padding:14px 12px 40px}
+h1{font:700 26px Georgia,"Times New Roman",serif;margin:4px 0 2px}h1 span{color:var(--acc)}
+.sub{color:var(--mut);font-size:13px;margin:0 0 12px}
+.tabs{display:flex;gap:6px;margin:10px 0}
+.tabs button{flex:1;padding:10px 4px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;font:600 14px inherit;font-family:inherit}
+.tabs button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.tabs.s button{font-weight:500;padding:7px 4px;font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;margin:10px 0;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-size:11px;color:var(--mut);text-transform:uppercase;text-align:center;padding:4px 3px}
+td{padding:8px 3px;text-align:center;border-top:1px solid var(--line)}
+td.n,th.n{text-align:left}td.n{font-weight:600}
+tr.as td{background:var(--as)}tr.de td{background:var(--de)}tr.pr td{background:var(--pr)}
+.pts{font-weight:800}
+.lg{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--mut);margin-top:8px}
+.lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.j{font:700 13px Georgia,serif;color:var(--acc);margin:14px 2px 4px}
+.m{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:6px;width:100%;color:var(--ink);font:inherit;text-align:left}
+.m b{font-weight:700}.m .r{font-size:13px;color:var(--mut);white-space:nowrap}.m .r.ok{color:var(--ink);font-weight:600}
+button.m{cursor:pointer}
+.chips{display:flex;gap:6px}.chips button{padding:5px 12px;border-radius:99px;border:1px solid var(--line);background:none;color:var(--ink);font:inherit;font-size:13px}
+.chips button.on{background:var(--ink);color:var(--bg)}
+.ad{background:var(--pr);border-radius:10px;padding:8px 10px;font-size:13px;margin:6px 0}
+.row{display:flex;align-items:center;gap:8px;margin:6px 0}.row span{width:70px;font-size:13px;color:var(--mut)}
+input{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px;width:100%}
+.row input{text-align:center}
+.btn{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:600 14px inherit;font-family:inherit}
+.btn.p{background:var(--acc);border-color:var(--acc);color:#fff}
+.mod{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:9}
+.mod>div{background:var(--card);width:100%;max-width:560px;border-radius:16px 16px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.pm{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line)}.pm:first-child{border:0}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:99px;font-size:13px;opacity:0;transition:.2s;z-index:20;pointer-events:none}
+#toast.on{opacity:1}
+</style></head><body>
+<div id="root"></div><div id="toast"></div>
+<script id="state" type="application/json">{"p":{"d1":["Ale","Esteban","Ivan Ventura","Rafael","Samir","Juan Tomas","Camilo","Kim"],"d2":["Jorge","Antonio","Kako","Lalo","Chema","Ivan","Valeria","Alberto"]},"r":{}}</script>
+<script id="app">
+const S=JSON.parse(document.getElementById('state').textContent);
+const $=s=>document.querySelector(s);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const DN={d1:'Primera',d2:'Segunda'};
+const Z={d1:{6:'pr',7:'de',8:'de'},d2:{1:'as',2:'as',3:'pr'}};
+let U={v:'d1',t:'cl',f:'p'},admin=false,edit=null;
+const SC=(()=>{let p=[0,1,2,3,4,5,6,7],o=[];for(let r=0;r<7;r++){for(let i=0;i<4;i++)o.push([r+1,p[i],p[7-i]]);p=[p[0],p[7],...p.slice(1,7)]}return o})();
+function calc(v){if(!v)return null;let a=0,b=0;const g=(x,y)=>{if(Number.isInteger(x)&&Number.isInteger(y)){if(x>y)a++;else if(y>x)b++}};
+g(v[0],v[1]);g(v[2],v[3]);if(a===1&&b===1)g(v[4],v[5]);
+return(a===2||b===2)?{a,b,ga:(v[0]|0)+(v[2]|0),gb:(v[1]|0)+(v[3]|0)}:null}
+function table(k){const st=S.p[k].map((n,i)=>({i,n,pj:0,g:0,p:0,pts:0,sg:0,sp:0,jg:0,jp:0}));
+SC.forEach(([j,a,b],m)=>{const c=calc(S.r[k+m]);if(!c)return;const A=st[a],B=st[b];A.pj++;B.pj++;A.sg+=c.a;A.sp+=c.b;B.sg+=c.b;B.sp+=c.a;A.jg+=c.ga;A.jp+=c.gb;B.jg+=c.gb;B.jp+=c.ga;
+if(c.a>c.b){A.g++;B.p++;A.pts+=3;B.pts++}else{B.g++;A.p++;B.pts+=3;A.pts++}});
+st.forEach(s=>{s.ds=s.sg-s.sp;s.dj=s.jg-s.jp});
+return st.sort((x,y)=>y.pts-x.pts||y.ds-x.ds||y.dj-x.dj||x.i-y.i)}
+const played=k=>SC.filter((s,m)=>calc(S.r[k+m])).length;
+const sg=n=>n>0?'+'+n:n;
+function vCl(k){const t=table(k),zz=Z[k];
+return `<div class="card"><table><tr><th>#</th><th class="n">Jugador</th><th>PJ</th><th>G</th><th>P</th><th>Pts</th><th>Sets</th><th>Juegos</th></tr>`+
+t.map((s,i)=>`<tr class="${zz[i+1]||''}"><td>${i+1}</td><td class="n">${esc(s.n)}</td><td>${s.pj}</td><td>${s.g}</td><td>${s.p}</td><td class="pts">${s.pts}</td><td>${sg(s.ds)}</td><td>${sg(s.dj)}</td></tr>`).join('')+
+`</table><div class="lg">${k==='d2'?'<span><i style="background:var(--as)"></i>Ascenso</span>':'<span><i style="background:var(--de)"></i>Descenso</span>'}<span><i style="background:var(--pr)"></i>Promoción</span></div>
+<div class="lg">Partidos jugados: ${played(k)} / 28. Desempate: puntos, sets, juegos.</div></div>`}
+function res(k,m){const v=S.r[k+m],c=calc(v);if(!c)return'<span class="r">Pendiente</span>';
+const s=[[0,1],[2,3],[4,5]].filter(([x,y],i)=>Number.isInteger(v[x])&&Number.isInteger(v[y])&&(i<2||(c.a+c.b===3))).map(([x,y])=>v[x]+'-'+v[y]);
+return `<span class="r ok">${s.join(' · ')}</span>`}
+function vPa(k){const n=S.p[k];let h=`<div class="chips">${[['p','Pendientes'],['j','Jugados'],['t','Todos']].map(([a,b])=>`<button class="${U.f===a?'on':''}" onclick="U.f='${a}';R()">${b}</button>`).join('')}</div>`;
+if(admin)h+='<div class="ad">Modo administrador: toca un partido para meter o corregir el resultado.</div>';
+let last=0,any=false;
+SC.forEach(([j,a,b],m)=>{const c=calc(S.r[k+m]);if(U.f==='p'&&c||U.f==='j'&&!c)return;any=true;
+if(j!==last){h+=`<div class="j">Jornada ${j}</div>`;last=j}
+const w=c?(c.a>c.b?a:b):-1,nm=(i)=>i===w?`<b>${esc(n[i])}</b>`:esc(n[i]);
+const inner=`<span>${nm(a)} vs ${nm(b)}</span>${res(k,m)}`;
+h+=admin?`<button class="m" onclick="openEd(${m})">${inner}</button>`:`<div class="m">${inner}</div>`});
+if(!any)h+='<p class="sub" style="margin-top:14px">No hay partidos en esta lista.</p>';return h}
+function vJu(k){const n=S.p[k];
+if(!admin)return`<div class="card">${n.map((x,i)=>`<div class="pm"><span>${i+1}</span><b>${esc(x)}</b></div>`).join('')}</div>`;
+return`<div class="card"><p class="sub">Cambia un nombre para sustituir a un jugador: sus resultados se mantienen en ese puesto.</p>${n.map((x,i)=>`<div class="row"><span>Jugador ${i+1}</span><input id="pn${i}" value="${esc(x)}" maxlength="30" style="text-align:left"></div>`).join('')}<button class="btn p" onclick="saveNames()">Guardar nombres</button></div>`}
+function vRes(){const a=table('d1'),b=table('d2'),done=played('d1')===28&&played('d2')===28;
+const c=(t,l,ic)=>`<div class="pm"><span>${t}</span><b>${esc(l)}</b></div>`;
+return`<div class="card"><div class="j" style="margin-top:0">Suben a Primera</div>${c('Segunda 1º',b[0].n)}${c('Segunda 2º',b[1].n)}
+<div class="j">Bajan a Segunda</div>${c('Primera 7º',a[6].n)}${c('Primera 8º',a[7].n)}
+<div class="j">Partido de promoción</div><div class="pm"><b>${esc(b[2].n)}</b><span>(3º de Segunda)</span></div><div class="pm"><b>${esc(a[5].n)}</b><span>(6º de Primera)</span></div>
+<p class="sub" style="margin-top:12px">${done?'Clasificaciones definitivas.':'Provisional: se actualiza con cada resultado. Jugados: Primera '+played('d1')+'/28 · Segunda '+played('d2')+'/28.'}</p></div>`}
+function R(){const k=U.v;let h='<h1>Liga de <span>Tenis</span></h1><p class="sub">Clasificación, resultados y partidos pendientes</p>';
+h+=`<div class="tabs">${[['d1','Primera'],['d2','Segunda'],['rs','Ascensos']].map(([a,b])=>`<button class="${U.v===a?'on':''}" onclick="U.v='${a}';R()">${b}</button>`).join('')}</div>`;
+if(k==='rs')h+=vRes();else{h+=`<div class="tabs s">${[['cl','Clasificación'],['pa','Partidos'],['ju','Jugadores']].map(([a,b])=>`<button class="${U.t===a?'on':''}" onclick="U.t='${a}';R()">${b}</button>`).join('')}</div>`;
+h+=U.t==='cl'?vCl(k):U.t==='pa'?vPa(k):vJu(k)}
+if(edit!==null)h+=modal();$('#root').innerHTML=h}
+function modal(){const [,a,b]=SC[edit],k=U.v,n=S.p[k],v=S.r[k+edit]||[];
+const row=(l,i)=>`<div class="row"><span>${l}</span><input id="e${i}" type="number" inputmode="numeric" min="0" max="40" value="${v[i]??''}"><input id="e${i+1}" type="number" inputmode="numeric" min="0" max="40" value="${v[i+1]??''}"></div>`;
+return`<div class="mod" onclick="if(event.target===this){edit=null;R()}"><div><b>${esc(n[a])} vs ${esc(n[b])}</b>
+<p class="sub">Games de cada set. El súper tie-break solo si hay 1-1.</p>${row('Set 1',0)}${row('Set 2',2)}${row('Súper TB',4)}
+<div class="row" style="margin-top:12px"><button class="btn p" onclick="saveRes()">Guardar</button><button class="btn" onclick="delRes()">Borrar</button><button class="btn" onclick="edit=null;R()">Cancelar</button></div></div></div>`}
+function openEd(m){edit=m;R()}
+function saveRes(){const v=[0,1,2,3,4,5].map(i=>{const x=$('#e'+i).value;return x===''?null:parseInt(x,10)});
+if(!calc(v)){toast('Resultado incompleto: hace falta un ganador con 2 sets');return}
+S.r[U.v+edit]=v;edit=null;commit()}
+function delRes(){delete S.r[U.v+edit];edit=null;commit()}
+function saveNames(){S.p[U.v]=S.p[U.v].map((o,i)=>($('#pn'+i).value.trim()||o));commit()}
+function toast(t){const e=$('#toast');e.textContent=t;e.className='on';setTimeout(()=>e.className='',2600)}
+async function commit(){R();try{const a=await claude.use('artifact');if(!a){toast('Solo lectura');return}
+const d=document.documentElement.cloneNode(true);d.querySelector('#state').textContent=JSON.stringify(S).replace(/</g,'\\u003c');
+d.querySelector('#root').innerHTML='';const t=d.querySelector('#toast');t.textContent='';t.className='';
+await a.publish('<!doctype html>\n'+d.outerHTML);toast('Guardado')}
+catch(e){if(e&&(e.code==='not_writer'||e.code==='not_granted')){admin=false;R();toast('Esta vista es de solo lectura')}else if(!e||e.code!=='conflict')toast('No se pudo guardar')}}
+R();
+try{window.claude&&claude.use('user').then(u=>{admin=!!(u&&u.canEdit&&u.canEdit());R()}).catch(()=>{})}catch(e){}
+</script></body></html>
